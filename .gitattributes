@@ -1,0 +1,13 @@
+# Personal data and your own trip plans. Tracked and committed in your own
+# repo (so you get history), but on `git pull upstream main` git keeps your
+# local version instead of trying to merge upstream's — upstream never ships
+# real trips or filled-in profiles, so there's nothing worth merging in.
+#
+# One-time setup per clone (not carried by this file — git requires it):
+#   git config merge.ours.driver true
+/profiles/** merge=ours -diff
+/trips/** merge=ours -diff
+
+# Except the example trip: that's upstream-maintained documentation, so it
+# should merge normally and pick up template improvements.
+/trips/example-trip/** merge diff

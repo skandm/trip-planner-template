@@ -1,0 +1,17 @@
+name: Lint skills
+
+on:
+  push: {}
+  pull_request: {}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint skill directory structure
+        run: scripts/lint-skills.sh
+
+      - name: Build .skill archives
+        run: scripts/package-skills.sh
