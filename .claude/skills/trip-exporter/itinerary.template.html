@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TRIP_TITLE}}</title>
+<style>
+  /* Palette: route-atlas blue on cool paper; night-drive slate in dark.
+     Readability rule: body content sets in --ink; --subtle is for secondary
+     detail and still meets 7:1; --muted is ONLY for metadata (eyebrow, time
+     rail, footer). All component styles read these tokens — theme variants
+     only redefine tokens. */
+  :root {
+    --bg: #F6F6F2;
+    --ink: #1E242A;
+    --subtle: #3C454F;
+    --muted: #4A545F;
+    --accent: #2B5A9E;
+    --line: #DDDFD7;
+    --rail: #EBEDE4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151B22;
+      --ink: #EDF0F3;
+      --subtle: #C4CDD6;
+      --muted: #A7B1BC;
+      --accent: #8FB4E8;
+      --line: #2B3540;
+      --rail: #1D2530;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #F6F6F2; --ink: #1E242A; --subtle: #3C454F; --muted: #4A545F;
+    --accent: #2B5A9E; --line: #DDDFD7; --rail: #EBEDE4;
+  }
+  :root[data-theme="dark"] {
+    --bg: #151B22; --ink: #EDF0F3; --subtle: #C4CDD6; --muted: #A7B1BC;
+    --accent: #8FB4E8; --line: #2B3540; --rail: #1D2530;
+  }
+
+  html { background: var(--bg); }
+  body {
+    margin: 0;
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  /* The page paints its own surface — never rely on the host canvas (style-guide.md). */
+  .page {
+    margin: 0 auto;
+    max-width: 46rem;
+    padding: 2.5rem 1.5rem 3rem;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  @media (min-width: 48rem) { .page { border-radius: 10px; margin: 1rem auto; } }
+  a { color: var(--accent); font-weight: 500; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  img { max-width: 100%; }
+
+  /* ---- Header ---- */
+  .eyebrow {
+    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600; margin: 0 0 0.5rem;
+  }
+  h1 {
+    font-family: "Iowan Old Style", Georgia, "Times New Roman", serif;
+    font-size: 2.1rem; font-weight: 600; line-height: 1.2;
+    margin: 0 0 0.75rem; text-wrap: balance;
+  }
+  .route-line {
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; align-items: baseline;
+    color: var(--subtle); font-size: 0.9375rem;
+    padding-bottom: 1.25rem; border-bottom: 2px solid var(--accent); margin-bottom: 1.5rem;
+  }
+  .route-line strong { color: var(--ink); font-weight: 600; }
+  /* Optional hero photo — the destination or the night's stay. Omit the tag if no image. */
+  .hero { margin: 0 0 2rem; }
+  .hero img { width: 100%; height: auto; border-radius: 8px; display: block; }
+  .hero figcaption { color: var(--muted); font-size: 0.8125rem; margin-top: 0.4rem; }
+
+  /* ---- Days ---- */
+  .day { margin-bottom: 2.5rem; }
+  .day > header {
+    display: flex; gap: 0.75rem; align-items: baseline; margin-bottom: 0.5rem;
+  }
+  .day-label {
+    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; white-space: nowrap;
+  }
+  .day h2 {
+    font-family: "Iowan Old Style", Georgia, "Times New Roman", serif;
+    font-size: 1.3rem; font-weight: 600; margin: 0; text-wrap: balance;
+  }
+  .sched { list-style: none; margin: 0; padding: 0; }
+  .sched li {
+    display: grid; grid-template-columns: 4rem 1fr; gap: 0.25rem 1rem;
+    align-items: start;
+    padding: 0.65rem 0; border-bottom: 1px solid var(--line);
+  }
+  .sched li.has-thumb { grid-template-columns: 4rem 1fr 7rem; }
+  .sched li:last-child { border-bottom: none; }
+  .sched time {
+    font-variant-numeric: tabular-nums; color: var(--subtle); font-weight: 500;
+    background: var(--rail); border-radius: 4px; text-align: center;
+    font-size: 0.875rem; padding: 0.15rem 0; height: fit-content; margin-top: 0.1rem;
+  }
+  /* Meta = rating · price · website, straight from the plan. Omit what the plan lacks. */
+  .meta { color: var(--subtle); font-size: 0.875rem; font-weight: 400; white-space: nowrap; }
+  .note { color: var(--subtle); font-size: 0.9375rem; margin-top: 0.15rem; }
+  .thumb {
+    width: 7rem; height: 5rem; object-fit: cover; border-radius: 6px;
+    grid-row: span 2;
+  }
+  .stay {
+    margin-top: 0.85rem; padding: 0.65rem 0.9rem; background: var(--rail);
+    border-left: 3px solid var(--accent); border-radius: 0 4px 4px 0; font-size: 0.9375rem;
+  }
+  .tbd { color: var(--subtle); font-style: italic; }
+
+  /* ---- Footer ---- */
+  footer {
+    margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 0.8125rem;
+  }
+  footer p { margin: 0.25rem 0; }
+
+  @media (max-width: 30rem) {
+    .sched li, .sched li.has-thumb { grid-template-columns: 3.25rem 1fr; }
+    .thumb { grid-row: auto; grid-column: 2; width: 100%; height: 9rem; margin-top: 0.35rem; }
+  }
+  @media print {
+    body { max-width: none; padding: 0; font-size: 12px; }
+    .day { break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+    .thumb { width: 5rem; height: 3.5rem; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    a { transition: color 120ms ease; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <p class="eyebrow">Road trip · {{TRIP_DATES}}</p>
+  <h1>{{TRIP_TITLE}}</h1>
+  <div class="route-line">
+    <span><strong>{{ORIGIN}}</strong> → <strong>{{DESTINATION}}</strong></span>
+    <span>{{TOTAL_DISTANCE_AND_TIME}}</span>
+    <span><a href="{{MAP_URL}}">Route map</a></span>
+  </div>
+  <!-- Optional hero: destination or the night's stay, embedded as a data URI
+       (see SKILL.md Step 3a for sourcing/licensing). Delete if no image. -->
+  <figure class="hero">
+    <img src="data:image/jpeg;base64,{{HERO_B64}}" alt="{{HERO_ALT}}">
+    <figcaption>{{HERO_CAPTION}}</figcaption>
+  </figure>
+</header>
+
+<!-- One .day section per itinerary day. Schedule lines mirror trip.md's Itinerary
+     exactly; links, ratings, and price tiers are copied from trip.md — omit any
+     the plan doesn't carry, never invent one. -->
+<section class="day">
+  <header>
+    <span class="day-label">Day 1</span>
+    <h2>{{DAY_DATE_AND_LEG}}</h2>
+  </header>
+  <ol class="sched">
+    <!-- Drive legs link to directions for that leg's endpoints — always, even before
+         anything is booked. Build: /maps/dir/?api=1&origin=<A>&destination=<B>&travelmode=driving -->
+    <li><time>10:30</time><div><a href="{{LEG_DIRECTIONS_URL}}">Depart {{ORIGIN}} → {{NEXT_STOP}}</a></div></li>
+    <!-- A stop with an embedded photo gets class="has-thumb" and a trailing <img class="thumb">: -->
+    <li class="has-thumb">
+      <time>13:00</time>
+      <div>Lunch — <a href="{{PLACE_URL}}">{{LUNCH_SPOT}}</a> <span class="meta">⭐ {{RATING}} · {{PRICE_TIER}} · <a href="{{WEBSITE_URL}}">Website</a></span>
+        <div class="note">{{PLACE_FACT}}</div>
+      </div>
+      <img class="thumb" src="data:image/jpeg;base64,{{PLACE_B64}}" alt="{{PLACE_ALT}}">
+    </li>
+    <!-- Unsettled slot, rendered honestly: -->
+    <li><time>19:00</time><div><span class="tbd">Dinner — to be decided</span></div></li>
+  </ol>
+  <p class="stay">Tonight: <strong>{{STAY_NAME}}</strong> — check-in {{CHECKIN_TIME}} · <a href="{{STAY_MAP_URL}}">Map</a></p>
+</section>
+
+<footer>
+  <p>Generated from this trip's plan on {{GENERATED_DATE}}. The plan file is the source of
+  truth — if this page and the plan disagree, trust the plan and re-export.</p>
+  <p>{{PHOTO_CREDITS — e.g. "Photos: <name> (CC BY-SA 4.0) via Wikimedia Commons." Delete if no images.}}</p>
+</footer>
+
+</div>
+</body>
+</html>

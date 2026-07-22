@@ -65,7 +65,7 @@ Set `status: ready` in the frontmatter only when every day has a full schedule w
 
 ## Step 5: Optional export
 
-If the user wants something to carry on the road, offer a companion export in the trip folder next to `trip.md` — e.g. `itinerary.md` (a clean printable copy) or an `.ics` file for calendar import. These are exports, not the source of truth; `trip.md` stays authoritative and the export should be regenerated from it, not hand-maintained separately.
+If the user wants something to carry on the road or share, hand off to the **trip-exporter** skill — it renders `trip.md` into a shareable `itinerary.html` in the trip folder (privacy-scrubbed, optionally published as an Artifact link). For a calendar import, an `.ics` file next to `trip.md` still works too. These are exports, not the source of truth; `trip.md` stays authoritative and exports are regenerated from it, not hand-maintained separately.
 
 ## Step 6: Log and hand off
 

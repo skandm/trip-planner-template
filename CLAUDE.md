@@ -35,6 +35,7 @@ Resolution order at the start of any trip-related request:
 - **food-scout** — recommends 2–3 meal options filtered by hard constraints and ranked by soft preferences. Trigger on food questions or a `_to scout_` food item.
 - **itinerary-builder** — assembles the day-by-day schedule once route/stays/food are mostly decided. Trigger on "build the itinerary" or when a trip is mostly settled.
 - **replanner** — adjusts an in-progress trip after a disruption with a minimal diff. Trigger when the user reports a change mid-trip or asks to re-plan from a given day.
+- **trip-exporter** — renders a trip's settled plan into a shareable single-file HTML page (`trips/<trip>/itinerary.html`), scrubbed of traveler health/dietary/mobility rationale; can optionally publish it as a private Artifact link with the user's per-trip consent. Trigger on "export/share/print the trip" or as an offer once a trip goes `ready`.
 
 Each documents its own full trigger in its SKILL.md.
 
