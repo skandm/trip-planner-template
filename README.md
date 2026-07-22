@@ -1,6 +1,8 @@
 # Trip Planner
 
-A Claude-powered trip planning workspace. Clone it, open it with Claude Code (or Cowork), and say "plan a road trip to Nashville" — Claude handles the rest using the skills bundled in this repo.
+A Claude-powered trip planning workspace. Clone it, open it with Claude Code (or Cowork), and say "plan a road trip to Nashville" — Claude handles the rest using the skills bundled in this repo. When a trip is settled, one more sentence ("export it") turns the plan into a shareable itinerary page:
+
+![Day-by-day itinerary page produced by the trip-exporter skill: route summary, photos, and a linked schedule with restaurants, hotels, and drive directions](docs/itinerary-preview.png)
 
 License: MIT (see `LICENSE`).
 
